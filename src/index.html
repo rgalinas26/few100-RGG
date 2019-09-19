@@ -4,21 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Front End Web 100</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <!--This is the link to the bootstrap stylesheet-->
 </head>
 
 <body>
-    <header>
+    <header class="container-fluid jumbotron">
+        <!--container-fluid means go all the way across the screen-->
         <h1>Front End Web 100 Starter</h1>
         <h2>Progressive ITU</h2>
     </header>
-    <main>
+    <main class="container">
         <input type="number"
+               class="form-control"
                id="num1">
         +
         <input type="number"
+               class="form-control"
                id="num2">
         <input type="button"
                id="add"
+               class="btn btn-primary"
                value="add">
         <span id="answer"></span>
     </main>

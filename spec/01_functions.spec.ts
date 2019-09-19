@@ -1,4 +1,4 @@
-import { isEven } from './utils';
+import { isEven, formatter, identity, jesseDecorator } from './utils';
 
 
 describe('functions', () => {
@@ -133,6 +133,88 @@ describe('array methods', () => {
 
             const total2 = numbers.reduce((c, n) => c + n, 100); // this shows the optional third parameter (100). It sets the starting count to 100.
             expect(total2).toBe(145);
+        });
+    });
+    describe('some more higher order functions', () => {
+        describe('a function that takesa fucntion as an argument', () => {
+            it('a kind of decorator', () => {
+                /*Note that identity does not have parens here (i.e. identity is not "executed" here)
+                Identity is referenced, and it is called by formatter once formatter's relevant logic is
+                executed*/
+                const response = formatter('Hello World!', identity);
+                expect(response).toBe('HELLO_WORLD!');
+
+
+                /*The anon function is passed into formatter. It is not executed here.
+                Here s in the anon function that will be called once formatter is done with its
+                inside business logic. Formatter calls the function and gives it the result of
+                message.replace(' ', '_').toUpperCase() as s. It is not called here. The actual
+                parens inside formatter calls the anon function once it is done. There are also notes
+                in the util page.*/
+                const jesseresponse = formatter('Hello World!', (s) => `***${s}***`);
+                expect(jesseresponse).toBe('***HELLO_WORLD!***');
+
+                /* bangSurround holds the fucntion that is returned from jesseDecorator
+                jesseeDecorator returns a function, and bangSurround can hold that
+                and be passed in to another higher order function. */
+
+                const bangSurround = jesseDecorator('!');
+                const jr2 = formatter('Hello World!', bangSurround);
+                expect(jr2).toBe('!!!HELLO_WORLD!!!!');
+
+                const jr3 = formatter('Hello World!', jesseDecorator('@'));
+                expect(jr3).toBe('@@@HELLO_WORLD!@@@');
+            });
+        });
+        describe('making elements with various techniques', () => {
+            it('straight-ahead procedural programming', () => {
+
+                function tagMaker(tag: string, content: string) {
+                    return `<${tag}>${content}</${tag}>`;
+                }
+
+                expect(tagMaker('h1', 'Hello')).toBe('<h1>Hello</h1>');
+                expect(tagMaker('h1', 'Dog')).toBe('<h1>Dog</h1>');
+                expect(tagMaker('h1', 'Cat')).toBe('<h1>Cat</h1>');
+                expect(tagMaker('p', 'Mouse')).toBe('<p>Mouse</p>');
+            });
+            it('doing it with objects', () => {
+
+                class TagMaker {
+                    constructor(private tag: string) { }
+
+                    make(content: string) {
+                        return `<${this.tag}>${content}</${this.tag}>`;
+                    }
+
+                }
+
+                const h1Maker = new TagMaker('h1');
+                const pMaker = new TagMaker('p');
+
+
+                expect(h1Maker.make('Hello')).toBe('<h1>Hello</h1>');
+                expect(h1Maker.make('Dog')).toBe('<h1>Dog</h1>');
+                expect(h1Maker.make('Cat')).toBe('<h1>Cat</h1>');
+                expect(pMaker.make('Mouse')).toBe('<p>Mouse</p>');
+
+            });
+
+            it('a functional approach', () => {
+
+                function tagMaker(tag: string) {
+                    return (content: string) => `<${tag}>${content}</${tag}>`;
+                }
+
+                const h1Maker = tagMaker('h1');
+                const pMaker = tagMaker('p');
+
+                expect(h1Maker('Hello')).toBe('<h1>Hello</h1>');
+                expect(h1Maker('Dog')).toBe('<h1>Dog</h1>');
+                expect(h1Maker('Cat')).toBe('<h1>Cat</h1>');
+                expect(pMaker('Mouse')).toBe('<p>Mouse</p>');
+                expect(tagMaker('h2')('Tacos')).toBe('<h2>Tacos</h2>');
+            });
         });
     });
 });
